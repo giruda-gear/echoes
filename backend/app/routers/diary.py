@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 
-from app.schemas.diary import DiaryCreate, DiaryUpdate
-from app.services.diary_service import DiaryService, get_diary_service
+from backend.app.schemas.diary import DiaryCreate, DiaryUpdate
+from backend.app.services.diary_service import DiaryService, get_diary_service
 
 router = APIRouter(prefix="/diaries", tags=["Diaries"])
 
