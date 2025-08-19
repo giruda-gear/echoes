@@ -1,2 +1,2 @@
 dev:
-	uvicorn backend.app.main:app --reload
+	uv run --package backend uvicorn backend.app.main:app --reload
