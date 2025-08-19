@@ -1,9 +1,10 @@
-venv
+.venv
 
 __pycache__
 
 /.cache
 /build
 .env
+
 
 node_modules
