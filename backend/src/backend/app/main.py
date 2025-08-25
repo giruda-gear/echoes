@@ -1,7 +1,6 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
-
-from backend.app.db.init import init_db
+from backend.app.core.db import init_db
 from backend.app.routers import diary
 from backend.app.routers import auth
 

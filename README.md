@@ -12,7 +12,7 @@
 docker compose up -d
 
 # install dependencies
-cd backend && uv sync
+uv sync
 
 # run development server
 (root) make dev

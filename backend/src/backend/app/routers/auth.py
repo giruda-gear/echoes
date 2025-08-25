@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 
-
+from backend.app.services.auth_service import AuthService, get_auth_service
 from backend.app.services.user_service import UserService, get_user_service
 from backend.app.schemas.auth import LoginRequest, SignUpRequest
 
@@ -10,10 +10,12 @@ router = APIRouter(prefix="/auth", tags=["Auth"])
 
 @router.post("/login")
 async def login(
-    data: LoginRequest, user_service: UserService = Depends(get_user_service)
+    data: LoginRequest, auth_service: AuthService = Depends(get_auth_service)
 ):
-    print(data)
-    return await user_service.find_one_by_email(data.email)
+    token = await auth_service.login(data.email, data.password)
+    if not token:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    return {"access_token": token}
 
 
 @router.post("/signup")
