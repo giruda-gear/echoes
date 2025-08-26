@@ -1,15 +1,20 @@
 from typing import Optional
 from beanie import PydanticObjectId
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 
 from backend.app.models.user import User
+from pymongo.errors import DuplicateKeyError
 
 
 class UserService:
-
     async def create(self, username: str, email: str, password: str) -> User:
         user = User.create(username=username, email=email, raw_password=password)
-        await user.insert()
+        try:
+            await user.insert()
+        except DuplicateKeyError:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Email already exists"
+            )
         return user
 
     async def find_one(self, user_id: str) -> Optional[User]:
@@ -17,7 +22,7 @@ class UserService:
         if user is None:
             raise HTTPException(status_code=404, detail="User not found")
         return user
-    
+
     async def find_one_by_email(self, email: str) -> Optional[User]:
         user = await User.find_one(User.email == email)
         if user is None:

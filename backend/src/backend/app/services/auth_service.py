@@ -18,7 +18,6 @@ class AuthService:
 
         token = create_access_token(
             data={"sub": str(user.id)},
-            expires_delta=timedelta(minutes=30),  # 필요시 config에서 불러오기
         )
         return token
 

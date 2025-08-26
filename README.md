@@ -1,6 +1,6 @@
 ```
 📦 root/
-├── backend/
+├── backend/src/backend/ (uv workspace)
 │   └── app/ (FastAPI)
 │  
 └── frontend/

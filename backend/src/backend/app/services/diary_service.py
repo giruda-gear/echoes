@@ -1,11 +1,10 @@
 from datetime import datetime, timezone
 from beanie import PydanticObjectId
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 from backend.app.models.diary import Diary
 
 
 class DiaryService:
-
     async def create(self, user_id: str, content: str) -> Diary:
         diary = Diary(user_id=user_id, content=content)
         await diary.insert()
@@ -17,8 +16,15 @@ class DiaryService:
             raise HTTPException(status_code=404, detail="Diary not found")
         return diary
 
-    async def update_content(self, diary_id: str, content: str) -> Diary:
-        diary = await self.get_by_id(diary_id)
+    async def update(self, diary_id: str, user_id: str, content: str) -> Diary:
+        diary = await self.find_one(diary_id)
+
+        if diary.user_id != user_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized to modify this diary",
+            )
+
         diary.content = content
         diary.updated_at = datetime.now(timezone.utc)
         await diary.save()
