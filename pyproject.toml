@@ -5,8 +5,10 @@ description = "Echoes monorepo"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "chromadb>=1.0.20",
     "passlib[bcrypt]>=1.7.4",
     "python-jose[cryptography]>=3.5.0",
+    "sentence-transformers>=5.1.0",
 ]
 
 [tool.uv.workspace]

@@ -1,13 +1,24 @@
 from datetime import datetime, timezone
+from backend.app.core.vector import (
+    delete_diary_vector,
+    diary_collection,
+    save_diary_vector,
+)
 from beanie import PydanticObjectId
 from fastapi import HTTPException, status
+
 from backend.app.models.diary import Diary
 
 
 class DiaryService:
     async def create(self, user_id: str, content: str) -> Diary:
-        diary = Diary(user_id=user_id, content=content)
-        await diary.insert()
+        try:
+            diary = Diary(user_id=user_id, content=content)
+            await diary.insert()
+            save_diary_vector(user_id=user_id, diary_id=diary.id, text=content)
+        except:
+            if diary:
+                await diary.delete()
         return diary
 
     async def find_one(self, diary_id: str) -> Diary:
@@ -28,6 +39,10 @@ class DiaryService:
         diary.content = content
         diary.updated_at = datetime.now(timezone.utc)
         await diary.save()
+
+        delete_diary_vector(diary_id=diary_id)
+        save_diary_vector(user_id=user_id, diary_id=diary_id, text=content)
+
         return diary
 
 

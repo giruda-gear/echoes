@@ -1,4 +1,3 @@
-from enum import unique
 from typing import Annotated
 from beanie import Document, Indexed
 from pydantic import EmailStr, Field
