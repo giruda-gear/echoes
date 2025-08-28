@@ -3,7 +3,7 @@ from beanie import PydanticObjectId
 from fastapi import HTTPException, status
 from pymongo.errors import DuplicateKeyError
 
-from backend.app.models.user import User
+from app.models.user import User
 
 
 class UserService:

@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from backend.app.core.vector import (
+from app.core.vector import (
     delete_diary_vector,
     diary_collection,
     save_diary_vector,
@@ -7,7 +7,7 @@ from backend.app.core.vector import (
 from beanie import PydanticObjectId
 from fastapi import HTTPException, status
 
-from backend.app.models.diary import Diary
+from app.models.diary import Diary
 
 
 class DiaryService:

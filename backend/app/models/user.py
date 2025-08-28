@@ -3,7 +3,7 @@ from beanie import Document, Indexed
 from pydantic import EmailStr, Field
 from datetime import datetime, timezone
 
-from backend.app.core.security import hash_password
+from app.core.security import hash_password
 
 
 class User(Document):

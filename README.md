@@ -17,8 +17,8 @@
 docker compose up -d
 
 # install dependencies
-uv sync
+poetry install
 
 # run development server
-(root) make dev
+poetry run uvicorn app.main:app --reload 
 ```

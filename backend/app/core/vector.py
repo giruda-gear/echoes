@@ -1,11 +1,21 @@
 import chromadb
+from pathlib import Path
 from sentence_transformers import SentenceTransformer
 
-client = chromadb.PersistentClient(path="./chroma_store")
 
-diary_collection = client.get_or_create_collection("diary_entries")
+CHROMA_STORE_PATH = Path(__file__).parent.parent.parent / "chroma_store"
 
-model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+client = None
+diary_collection = None
+model = None
+
+
+def init_vector_store():
+    global client, diary_collection, model
+    if client is None:
+        client = chromadb.PersistentClient(path=str(CHROMA_STORE_PATH))
+        diary_collection = client.get_or_create_collection("diary_entries")
+        model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
 
 
 def get_embedding(text: str):

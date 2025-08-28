@@ -1,7 +1,7 @@
 from fastapi import Depends
 
-from backend.app.services.user_service import UserService, get_user_service
-from backend.app.core.security import create_access_token, verify_password
+from app.services.user_service import UserService, get_user_service
+from app.core.security import create_access_token, verify_password
 
 
 class AuthService:
