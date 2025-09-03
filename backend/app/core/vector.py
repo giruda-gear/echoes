@@ -1,28 +1,26 @@
+from typing import Any, Dict
 import chromadb
-from pathlib import Path
 from sentence_transformers import SentenceTransformer
 
+from app.core.config import CHROMA_HOST, CHROMA_PORT
 
-CHROMA_STORE_PATH = Path(__file__).parent.parent.parent / "chroma_store"
 
-client = None
 diary_collection = None
 model = None
 
 
 def init_vector_store():
-    global client, diary_collection, model
-    if client is None:
-        client = chromadb.PersistentClient(path=str(CHROMA_STORE_PATH))
-        diary_collection = client.get_or_create_collection("diary_entries")
-        model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+    global diary_collection, model
+    client = chromadb.HttpClient(host=CHROMA_HOST, port=CHROMA_PORT)
+    diary_collection = client.get_or_create_collection("diary_entries")
+    model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
 
 
 def get_embedding(text: str):
     return model.encode(text, normalize_embeddings=True).tolist()
 
 
-def save_diary_vector(user_id: str, diary_id: str, text: str):
+def save_diary_vector(user_id: str, diary_id: str, text: str) -> None:
     vector = get_embedding(text)
     diary_collection.add(
         ids=[diary_id],
@@ -32,8 +30,8 @@ def save_diary_vector(user_id: str, diary_id: str, text: str):
     )
 
 
-def search_similar_diaries(user_id: str, query_text: str, top_k: int = 5):
-    vector = get_embedding(query_text)
+def search_similar_diaries(user_id: str, query: str, top_k: int = 5) -> Dict[str, Any]:
+    vector = get_embedding(query)
     results = diary_collection.query(
         query_embeddings=[vector], n_results=top_k, where={"user_id": user_id}
     )

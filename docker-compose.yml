@@ -9,7 +9,16 @@ services:
       - mongodb_config:/data/configdb
     environment:
       - MONGO_INITDB_DATABASE=${MONGO_DB_NAME}
+  
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: echoes-chromadb
+    ports:
+      - "9000:8000"
+    volumes:
+      - chroma_data:/chroma/.chromadb
 
 volumes:
   mongodb_data:
   mongodb_config:
+  chroma_data:
