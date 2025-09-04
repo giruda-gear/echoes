@@ -2,10 +2,12 @@
 
 __pycache__
 
-/.cache
-/build
+.cache/
+build/
 .env
 
-chroma_store
+.DS_Store
+node_modules/
 
-node_modules
+# React Router
+.react-router/
