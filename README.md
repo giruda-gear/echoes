@@ -13,12 +13,16 @@
 ```
 
 ```bash
-# start docker containers (MongoDB)
+# start docker containers (MongoDB & ChromaDB)
 docker compose up -d
 
 # install dependencies
-poetry install
+cd backend && uv sync
 
 # run development server
-poetry run uvicorn app.main:app --reload 
+cd backend && uv run uvicorn app.main:app 
+
+
+# install dependencies (frontend)
+cd frontend && pnpm install
 ```
