@@ -6,10 +6,11 @@
 
 ```
 📦 root/
-├── backend/src/backend/ (uv workspace)
+├── backend
 │   └── app/ (FastAPI)
 │  
-└── frontend/
+├── frontend
+│   └── app/ (Remix)
 ```
 
 ```bash
