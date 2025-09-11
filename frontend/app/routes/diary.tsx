@@ -1,26 +1,16 @@
-import type { Route } from "./+types/home"
-
-import Navbar from "~/components/layout/Navbar"
-import SidebarHeader from "~/components/layout/SidebarHeader"
+import { useLoaderData, type ActionFunctionArgs } from "react-router"
+import { getDiaries } from "~/services/diary.server"
 import DiaryCotent from "~/components/diary/DiaryContent"
 import DiaryHeader from "~/components/diary/DiaryHeader"
+import Navbar from "~/components/layout/Navbar"
+import SidebarHeader from "~/components/layout/SidebarHeader"
 
-import { useLoaderData } from "react-router"
-import { getDiaries } from "~/api/diary"
-
-export function meta({}: Route.MetaArgs) {
-  return [
-    { title: "echoes" },
-    { name: "description", content: "Welcome to echoes diary!" },
-  ]
-}
-
-export async function loader() {
-  const diaries = await getDiaries()
+export async function loader({ request }: ActionFunctionArgs) {
+  const diaries = await getDiaries(request)
   return { diaries }
 }
 
-export default function Home() {
+export default function Diary() {
   const { diaries } = useLoaderData<typeof loader>()
 
   return (
