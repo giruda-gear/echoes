@@ -1,8 +1,6 @@
 import { API_URL } from "~/config.server"
 
-export async function getDiaries(request: Request) {
-  const token = "";
-  console.log(token);
+export async function getDiaries(token: string) {
   const response = await fetch(`${API_URL}/diaries`, {
     headers: {
       "Content-Type": "application/json",
@@ -11,8 +9,7 @@ export async function getDiaries(request: Request) {
   })
 
   if (!response.ok) {
-    const errorText = await response.text()
-    throw new Error(`API Error (${response.status}): ${errorText}`)
+    throw new Error("Failed to fetch diaries")
   }
 
   return response.json()

@@ -1,13 +1,24 @@
-import { useLoaderData, type ActionFunctionArgs } from "react-router"
+import {
+  useLoaderData,
+  type ActionFunctionArgs,
+  type LoaderFunctionArgs,
+} from "react-router"
 import { getDiaries } from "~/services/diary.server"
 import DiaryCotent from "~/components/diary/DiaryContent"
 import DiaryHeader from "~/components/diary/DiaryHeader"
 import Navbar from "~/components/layout/Navbar"
 import SidebarHeader from "~/components/layout/SidebarHeader"
+import { requireUserToken } from "~/utils/session.server"
 
-export async function loader({ request }: ActionFunctionArgs) {
-  const diaries = await getDiaries(request)
-  return { diaries }
+export async function loader({ request }: LoaderFunctionArgs) {
+  try {
+    const token = await requireUserToken(request)
+    const diaries = await getDiaries(token)
+    return { diaries }
+  } catch (err: unknown) {
+    console.error(err)
+    return new Response("Internal Server Error", { status: 500 })
+  }
 }
 
 export default function Diary() {

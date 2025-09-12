@@ -10,8 +10,8 @@ export async function login(email: string, password: string) {
   })
 
   if (!response.ok) {
-    throw new Error("login failed");
+    throw new Error("login failed")
   }
 
-  return response.json();
+  return response.json()
 }

@@ -1,5 +1,6 @@
 import { Form, redirect, type ActionFunctionArgs } from "react-router"
 import { login } from "~/services/auth.server"
+import { commitSession, getSession } from "~/utils/session.server"
 
 export async function action({ request }: ActionFunctionArgs) {
   try {
@@ -7,13 +8,20 @@ export async function action({ request }: ActionFunctionArgs) {
     const email = form.get("email") as string
     const password = form.get("password") as string
 
-    const token = await login(email, password)
+    const { access_token } = await login(email, password)
 
-    if (!token) {
+    if (!access_token) {
       return redirect("/login")
     }
 
-    return redirect("/diary")
+    const session = await getSession(request.headers.get("Cookie"))
+    session.set("accessToken", access_token)
+
+    return redirect("/diary", {
+      headers: {
+        "Set-Cookie": await commitSession(session),
+      },
+    })
   } catch (err) {
     console.error(err)
     return redirect("/login")
