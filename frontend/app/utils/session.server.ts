@@ -14,9 +14,9 @@ export const sessionStorage = createCookieSessionStorage({
 
 export const { getSession, commitSession, destroySession } = sessionStorage
 
-export async function requireUserToken(request: Request) {
-  const session = await getSession(request.headers.get("Cookie"))
-  const token = session.get("accessToken")
+export async function getUserToken(request: Request) {
+  const session = await getSession(request.headers.get("Cookie")) 
+  const token = session?.get("accessToken")
 
   if (!token) {
     throw redirect("/login")

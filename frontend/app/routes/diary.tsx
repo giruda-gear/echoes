@@ -8,11 +8,11 @@ import DiaryCotent from "~/components/diary/DiaryContent"
 import DiaryHeader from "~/components/diary/DiaryHeader"
 import Navbar from "~/components/layout/Navbar"
 import SidebarHeader from "~/components/layout/SidebarHeader"
-import { requireUserToken } from "~/utils/session.server"
+import { getUserToken } from "~/utils/session.server"
 
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
-    const token = await requireUserToken(request)
+    const token = await getUserToken(request)
     const diaries = await getDiaries(token)
     return { diaries }
   } catch (err: unknown) {

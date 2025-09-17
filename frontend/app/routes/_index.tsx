@@ -1,4 +1,10 @@
-import { type MetaFunction } from "react-router"
+import {
+  redirect,
+  type LoaderFunctionArgs,
+  type MetaFunction,
+} from "react-router"
+import { verifyToken } from "~/services/auth.server"
+import { getUserToken } from "~/utils/session.server"
 
 export function meta({}: MetaFunction) {
   return [
@@ -7,6 +13,12 @@ export function meta({}: MetaFunction) {
   ]
 }
 
+export async function loader({ request }: LoaderFunctionArgs) {
+  const token = await getUserToken(request)
+  await verifyToken(token)
+  return redirect("/diary")
+}
+
 export default function Home() {
-  return <div>home</div>
+  return null
 }
