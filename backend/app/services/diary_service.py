@@ -1,5 +1,4 @@
 from datetime import datetime, timezone
-from typing import List
 from app.core.vector import (
     delete_diary_vector,
     diary_collection,
@@ -30,7 +29,7 @@ class DiaryService:
             raise HTTPException(status_code=404, detail="Diary not found")
         return diary
 
-    async def find_by_user(self, user_id: str) -> List[Diary]:
+    async def find_by_user(self, user_id: str) -> list[Diary]:
         diaries = await Diary.find(Diary.user_id == user_id).to_list()
         return diaries
 

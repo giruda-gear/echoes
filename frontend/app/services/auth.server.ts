@@ -35,3 +35,23 @@ export async function verifyToken(token: string) {
 
   return response.json()
 }
+
+export async function refreshAccessToken(token: string) {
+  const response = await fetch(`${API_URL}/auth/refresh`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+  if (response.status === 401) {
+    throw redirect("/login")
+  }
+
+  if (!response.ok) {
+    throw new Error("Failed to verify token")
+  }
+
+  return response.json()
+}

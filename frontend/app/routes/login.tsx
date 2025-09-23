@@ -8,14 +8,14 @@ export async function action({ request }: ActionFunctionArgs) {
     const email = form.get("email") as string
     const password = form.get("password") as string
 
-    const { access_token } = await login(email, password)
-
-    if (!access_token) {
+    const { access_token, refresh_token } = await login(email, password)
+    if (!access_token || !refresh_token) {
       return redirect("/login")
     }
 
     const session = await getSession(request.headers.get("Cookie"))
     session.set("accessToken", access_token)
+    session.set("refreshToken", refresh_token)
 
     return redirect("/diary", {
       headers: {
