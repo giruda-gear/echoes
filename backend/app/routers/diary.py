@@ -1,8 +1,7 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, BackgroundTasks, Depends
 
 from app.core.security import get_current_user_id
-from app.core.vector import search_similar_diaries
-from app.schemas.diary import DiaryCreate, DiaryUpdate
+from app.schemas.diary import DiaryUpdate
 from app.services.diary_service import DiaryService, get_diary_service
 
 router = APIRouter(prefix="/diaries", tags=["Diaries"])
@@ -35,11 +34,10 @@ async def get_diary(
 
 @router.post("")
 async def create_diary(
-    diary: DiaryCreate,
     user_id: str = Depends(get_current_user_id),
     diary_service: DiaryService = Depends(get_diary_service),
 ):
-    return await diary_service.create(user_id, diary.content)
+    return await diary_service.create(user_id)
 
 
 @router.patch("/{diary_id}")
@@ -48,7 +46,14 @@ async def update_diary(
     diary: DiaryUpdate,
     user_id: str = Depends(get_current_user_id),
     diary_service: DiaryService = Depends(get_diary_service),
+    background_tasks: BackgroundTasks = None,
 ):
-    return await diary_service.update(
+    diary = await diary_service.update(
         diary_id=diary_id, user_id=user_id, content=diary.content
     )
+
+    background_tasks.add_task(
+        diary_service.refresh_diary_vector, diary_id, user_id, diary.content
+    )
+
+    return diary

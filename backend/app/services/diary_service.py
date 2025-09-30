@@ -1,7 +1,6 @@
 from datetime import datetime, timezone
 from app.core.vector import (
     delete_diary_vector,
-    diary_collection,
     save_diary_vector,
     search_similar_diaries,
 )
@@ -12,15 +11,9 @@ from app.models.diary import Diary
 
 
 class DiaryService:
-    async def create(self, user_id: str, content: str) -> Diary:
-        try:
-            diary = Diary(user_id=user_id, content=content)
-            await diary.insert()
-            save_diary_vector(user_id=user_id, diary_id=str(diary.id), text=content)
-        except Exception as e:
-            if diary:
-                await diary.delete()
-            raise e
+    async def create(self, user_id: str) -> Diary:
+        diary = Diary(user_id=user_id, title="New Diary", content="")
+        await diary.insert()
         return diary
 
     async def find_one(self, diary_id: str) -> Diary:
@@ -45,14 +38,20 @@ class DiaryService:
                 detail="Not authorized to modify this diary",
             )
 
+        diary.title = content.split("\n")[0]
         diary.content = content
         diary.updated_at = datetime.now(timezone.utc)
         await diary.save()
 
-        delete_diary_vector(diary_id=diary_id)
-        save_diary_vector(user_id=user_id, diary_id=diary_id, text=content)
-
         return diary
+
+    def refresh_diary_vector(diary_id: str, user_id: str, content: str):
+        try:
+            delete_diary_vector(diary_id=diary_id)
+            save_diary_vector(user_id=user_id, diary_id=diary_id, text=content)
+        except Exception as e:
+            # TODO: add logging
+            print(f"[WARN] vector update failed for {diary_id}: {e}")
 
 
 def get_diary_service():
