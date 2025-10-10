@@ -14,8 +14,7 @@ export function meta({}: MetaFunction) {
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const token = await getUserToken(request)
-  await verifyToken(token)
+  await getUserToken(request)
   return redirect("/diary")
 }
 

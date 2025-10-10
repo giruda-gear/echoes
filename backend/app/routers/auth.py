@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from app.core.security import (
     create_access_token,
+    create_refresh_token,
     decode_refresh_token,
     get_current_user_id,
     refresh_oauth2_scheme,
@@ -39,7 +40,9 @@ async def refresh_access_token(refresh_token: str = Depends(refresh_oauth2_schem
     # TODO: Check if refresh token exists in DB and is still valid
 
     new_access_token = create_access_token({"sub": user_id})
-    return {"access_token": new_access_token}
+    new_refresh_token = create_refresh_token({"sub": user_id})  # rotation
+
+    return {"access_token": new_access_token, "refresh_token": new_refresh_token}
 
 
 @router.post("/signup")

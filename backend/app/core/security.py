@@ -67,7 +67,6 @@ def decode_access_token(token: str) -> dict | None:
 
 
 def decode_refresh_token(token: str) -> dict | None:
-    print(token)
     try:
         payload = jwt.decode(token, REFRESH_TOKEN_SECRET, algorithms=[ALGORITHM])
         return payload
