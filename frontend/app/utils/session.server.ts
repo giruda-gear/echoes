@@ -1,5 +1,6 @@
 import {
   createCookieSessionStorage,
+  data,
   redirect,
   type ActionFunctionArgs,
   type LoaderFunctionArgs,
@@ -11,7 +12,6 @@ type AuthHandlerArgs<Context = unknown> = (
   | ActionFunctionArgs<Context>
 ) & {
   accessToken: string
-  headers?: Record<string, string>
 }
 
 type AuthHandler = (args: AuthHandlerArgs) => Promise<any>
@@ -47,10 +47,8 @@ export async function getUserToken(request: Request) {
 
     try {
       const newTokens = await refreshAccessToken(refreshToken)
-      accessToken = newTokens.access_token
-      refreshToken = newTokens.refresh_token
-      session.set("accessToken", newTokens.accessToken)
-      session.set("refreshToken", newTokens.refreshToken)
+      session.set("accessToken", newTokens.access_token)
+      session.set("refreshToken", newTokens.refresh_token)
       tokenRefreshed = true
     } catch (err) {
       console.error("Token refresh failed:", err)
@@ -77,11 +75,16 @@ export const withAuth =
       args.request,
     )
 
-    const headers: Record<string, string> = {}
-    if (tokenRefreshed) headers["Set-Cookie"] = await commitSession(session)
-
     try {
-      return await handler({ ...args, accessToken, headers })
+      const result = await handler({ ...args, accessToken })
+
+      return data(result, {
+        headers: tokenRefreshed
+          ? {
+              "Set-Cookie": await commitSession(session),
+            }
+          : {},
+      })
     } catch (error) {
       console.error("Auth error:", error)
       throw redirect("/login")
